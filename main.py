@@ -119,64 +119,70 @@ async def query_ticket(ctx: ApplicationContext, ticket: Ticket):
         page = await browser.new_page()
         img = None
         for _ in range(26000):
-            await page.goto(
-                "https://www.railway.gov.tw/tra-tip-web/tip/tip001/tip123/query"
-            )
-            if (
-                page.url
-                != "https://www.railway.gov.tw/tra-tip-web/tip/tip001/tip123/query"
-            ):
-                msg = "[網站](https://www.railway.gov.tw/tra-tip-web/tip/tip001/tip123/query)暫時無法使用"
-                break
+            try:
+                await page.goto(
+                    "https://www.railway.gov.tw/tra-tip-web/tip/tip001/tip123/query"
+                )
+                if (
+                    page.url
+                    != "https://www.railway.gov.tw/tra-tip-web/tip/tip001/tip123/query"
+                ):
+                    msg = "[網站](https://www.railway.gov.tw/tra-tip-web/tip/tip001/tip123/query)暫時無法使用"
+                    break
 
-            pid = await page.query_selector("#pid")
-            await pid.type(UID)
+                pid = await page.query_selector("#pid")
+                await pid.type(UID)
 
-            btn = await page.query_selector(
-                "#queryForm > div.basic-info > div:nth-child(3) > div.btn-group > label:nth-child(2)"
-            )
-            await btn.click()
+                btn = await page.query_selector(
+                    "#queryForm > div.basic-info > div:nth-child(3) > div.btn-group > label:nth-child(2)"
+                )
+                await btn.click()
 
-            startSta = await page.query_selector("#startStation1")
-            await startSta.type(start)
+                startSta = await page.query_selector("#startStation1")
+                await startSta.type(start)
 
-            dest = await page.query_selector("#endStation1")
-            await dest.type(end)
+                dest = await page.query_selector("#endStation1")
+                await dest.type(end)
 
-            dateField = await page.query_selector("#rideDate1")
-            await dateField.select_text()
-            await dateField.type(date)
+                dateField = await page.query_selector("#rideDate1")
+                await dateField.select_text()
+                await dateField.type(date)
 
-            startTime = await page.query_selector("#startTime1")
-            await startTime.select_option(start_time)
+                startTime = await page.query_selector("#startTime1")
+                await startTime.select_option(start_time)
 
-            endtime = await page.query_selector("#endTime1")
-            await endtime.select_option(end_time)
+                endtime = await page.query_selector("#endTime1")
+                await endtime.select_option(end_time)
 
-            btn3000 = await page.query_selector(
-                "#queryForm > div:nth-child(3) > div.column.byTime > div > div.trainType > label:nth-child(1)"
-            )
-            await btn3000.click()
+                btn3000 = await page.query_selector(
+                    "#queryForm > div:nth-child(3) > div.column.byTime > div > div.trainType > label:nth-child(1)"
+                )
+                await btn3000.click()
 
-            btnPuyuma = await page.query_selector(
-                "#queryForm > div:nth-child(3) > div.column.byTime > div > div.trainType > label:nth-child(3)"
-            )
-            await btnPuyuma.click()
+                btnPuyuma = await page.query_selector(
+                    "#queryForm > div:nth-child(3) > div.column.byTime > div > div.trainType > label:nth-child(3)"
+                )
+                await btnPuyuma.click()
 
-            btnzhuchun = await page.query_selector(
-                "#queryForm > div:nth-child(3) > div.column.byTime > div > div.trainType > label:nth-child(4)"
-            )
-            await btnzhuchun.click()
-            submit = await page.query_selector("#queryForm > div.btn-sentgroup > input")
-            await submit.click()
-            await page.wait_for_selector("#content > div.alert.alert-info")
+                btnzhuchun = await page.query_selector(
+                    "#queryForm > div:nth-child(3) > div.column.byTime > div > div.trainType > label:nth-child(4)"
+                )
+                await btnzhuchun.click()
+                submit = await page.query_selector("#queryForm > div.btn-sentgroup > input")
+                await submit.click()
+                await page.wait_for_selector("#content > div.alert.alert-info")
 
-            all_ticket = await page.query_selector_all("input[type=radio]")
-            if all_ticket:
-                msg = "有票拉有票拉"
+                all_ticket = await page.query_selector_all("input[type=radio]")
+                if all_ticket:
+                    msg = "有票拉有票拉"
+                    img = await page.screenshot(type="png")
+                    break
+                await sleep(3)
+            except Exception as e:
+                print(ticket, e)
+                msg = "發生錯誤"
                 img = await page.screenshot(type="png")
                 break
-            await sleep(3)
         await browser.close()
     file = None
     if img:
