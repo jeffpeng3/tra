@@ -9,13 +9,14 @@ from discord import (
     ButtonStyle,
     Interaction,
     Message,
-    File
+    File,
 )
 from setting import station, time
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from discord.ui import View, button, Button
 from dataclasses import dataclass
 from os import getenv
+
 bot = Bot()
 
 
@@ -173,15 +174,15 @@ async def query_ticket(ctx: ApplicationContext, ticket: Ticket):
             all_ticket = await page.query_selector_all("input[type=radio]")
             if all_ticket:
                 msg = "有票拉有票拉"
-                img = await page.screenshot(type='png')
+                img = await page.screenshot(type="png")
                 break
             await sleep(3)
         await browser.close()
+    file = None
     if img:
-        img = BytesIO(img)
-        await ctx.respond(msg, file=File(img,"screenShot.png"), view=retryView(ctx, ticket))
-    else:
-        await ctx.respond(msg, view=retryView(ctx, ticket))
+        file = File(BytesIO(img), "screenShot.png")
+    await ctx.author.send(msg, file=file, view=retryView(ctx, ticket))
+    print(datetime.now(), ticket)
 
 
 bot.run(getenv("TOKEN"))
