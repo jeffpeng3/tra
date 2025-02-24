@@ -101,7 +101,7 @@ class retryView(View):
         self.disable_all_items()
         self.stop()
         await interaction.message.delete()
-        await self.ctx.respond(content="已重新開始撈票", delete_after=10)
+        await self.ctx.author.send(content="已重新開始撈票", delete_after=10)
         create_task(query_ticket(self.ctx, self.ticket))
 
 
