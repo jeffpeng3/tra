@@ -1,4 +1,4 @@
-FROM python:3.12.8-bullseye AS builder
+FROM python:3.12-slim AS builder
 
 RUN pip install patchright py-cord
 
