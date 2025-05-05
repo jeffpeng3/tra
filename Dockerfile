@@ -1,10 +1,12 @@
 FROM python:3.12-slim AS builder
 
-RUN pip install patchright py-cord
+RUN sudo apt install -y libgtk-3-0 libx11-xcb1 libasound2
 
-RUN patchright install chromium
+RUN pip install camoufox py-cord
 
-RUN patchright install-deps
+COPY dummy.py .
+
+RUN python -u dummy.py
 
 COPY . .
 
