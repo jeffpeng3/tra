@@ -1,14 +1,17 @@
-from view import retryView
+from recognizer.agents.playwright import AsyncChallenger
+from .view import retryView
 from io import BytesIO
-from patchright.async_api import async_playwright, Page
+
+from camoufox import AsyncCamoufox
+from playwright.async_api import Page
 from asyncio import sleep
 from discord import (
     ApplicationContext,
     File,
 )
 from datetime import datetime
-from classes import Ticket, Mode
-from utils import generateId
+from .classes import Ticket, Mode
+from .utils import generateId
 
 
 async def setUID(page: Page, UID: str):
@@ -88,11 +91,11 @@ async def queryTicket(ctx: ApplicationContext, ticket: Ticket):
     end_time = ticket.end_time
 
     msg = "努力翻找了一天還是沒有收穫..."
-    async with async_playwright() as p:
-        browser = await p.chromium.launch()
+    async with AsyncCamoufox() as browser:
         page = await browser.new_page()
+        challenger = AsyncChallenger(page, click_timeout=1000)
         img = None
-        for _ in range(26000):
+        for _ in range(2):
             try:
                 await page.goto(
                     "https://www.railway.gov.tw/tra-tip-web/tip/tip001/tip123/query"
@@ -130,26 +133,41 @@ async def queryTicket(ctx: ApplicationContext, ticket: Ticket):
                 msg = "發生錯誤"
                 img = await page.screenshot(type="png")
                 break
-        await browser.close()
+    await browser.close()
     file = None
     if img:
         file = File(BytesIO(img), "screenShot.png")
     await ctx.author.send(msg, file=file, view=retryView(ctx, ticket))
-    print(datetime.now(), ticket)
+    print(datetime.now(), msg, ticket)
 
 
-# if __name__ == "__main__":
-#     from classes import Ticket
-#     from utils import generateId
+if __name__ == "__main__":
+    from .classes import Ticket
 
-#     ticket = Ticket(
-#         UID=generateId(),
-#         start="南港",
-#         end="台北",
-#         date="2025/4/1",
-#         start_time="14:00",
-#         end_time="16:00",
-#     )
-#     from asyncio import run
+    # --- 開始修改 ---
+    # 定義一個簡單的 Mock Context
+    class MockAuthor:
+        async def send(self, *args, **kwargs):
+            print("Mock Send:", args, kwargs)  # 模擬發送訊息，打印出來
 
-#     run(queryTicket(ApplicationContext(), ticket))
+    class MockContext:
+        def __init__(self):
+            self.author = MockAuthor()
+            self.bot = None  # 根據 queryTicket 中的 if ctx.bot: 判斷
+
+    mock_ctx = MockContext()
+    # --- 結束修改 ---
+    ticket = Ticket(
+        start="1000-臺北",
+        end="3300-臺中",
+        date="20250509",
+        mode=Mode.time,
+        start_time="01:00",
+        end_time="03:00",
+        train_type=[True, True, True],
+        train=[],
+    )
+
+    from asyncio import run
+
+    run(queryTicket(mock_ctx, ticket))

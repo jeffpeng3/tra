@@ -5,7 +5,7 @@ from discord import (
 )
 from discord.ext.bridge import Bot
 from os import getenv
-from view import DateSelectionView, StartView
+from core.view import DateSelectionView, StartView
 
 bot = Bot()
 

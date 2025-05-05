@@ -6,9 +6,9 @@ from discord import (
     Message,
 )
 from discord.ui import View, button, Button, Select, Modal, InputText
-from classes import Ticket
+from .classes import Ticket
 from datetime import date, timedelta
-from utils import station
+from .utils import station
 
 GREEN = ButtonStyle.green
 RED = ButtonStyle.red

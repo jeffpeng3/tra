@@ -65,5 +65,5 @@ class Ticket:
         return cls(date, start, end, mode, start_time, end_time, train_type, train)
 
     def submit(self, ctx: ApplicationContext):
-        from tra_spider import queryTicket
+        from core.tra_spider import queryTicket
         create_task(queryTicket(ctx, self))
