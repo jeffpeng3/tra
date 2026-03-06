@@ -35,7 +35,7 @@ jobs:
             type=ref,event=pr
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: ${{ github.ref == 'refs/heads/master' && github.event_name == 'push' }}
           tags: ${{ steps.meta.outputs.tags }}
