@@ -6,7 +6,7 @@ authors = [
     { name = "jeff", email = "jeffpeng2012@gmail.com" }
 ]
 dependencies = [
-    "camoufox>=0.4.11",
+    "camoufox>=0.5.4",
     "py-cord[speed]==2.6.1",
     "recognizer==1.4",
 ]
