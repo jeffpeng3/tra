@@ -1,13 +1,13 @@
 FROM python:3.12-slim AS builder
 
-RUN sudo apt install -y libgtk-3-0 libx11-xcb1 libasound2
+RUN pip install camoufox py-cord recognizer==1.4
 
-RUN pip install camoufox py-cord
+RUN apt-get update && apt-get install -y --no-install-recommends libgtk-3-0 libx11-xcb1 libasound2 libgl1 xvfb xauth && rm -rf /var/lib/apt/lists/*
 
 COPY dummy.py .
 
-RUN python -u dummy.py
+RUN xvfb-run -a python -u dummy.py
 
 COPY . .
 
-CMD ["python3", "-u", "main.py"]
+CMD ["xvfb-run", "-a", "python3", "-u", "main.py"]
