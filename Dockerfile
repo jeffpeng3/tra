@@ -10,4 +10,4 @@ RUN xvfb-run -a python -u dummy.py
 
 COPY . .
 
-CMD ["python3", "-u", "main.py"]
+CMD ["xvfb-run", "-a", "python3", "-u", "main.py"]
