@@ -4,7 +4,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends libgtk-3-0 libx
 
 RUN pip install camoufox py-cord recognizer==1.4
 
-RUN python -c "import importlib.util; assert importlib.util.find_spec('recognizer') is not None; import camoufox; import discord"
+COPY dummy.py .
+
+RUN python -u dummy.py
 
 COPY . .
 
